@@ -13,6 +13,71 @@ SPNAV_EVENT_ANY = 0
 SPNAV_EVENT_MOTION = 1
 SPNAV_EVENT_BUTTON = 2
 
+### Python event classes
+
+class SpnavEvent(object):
+    '''Space Navigator Event Base class
+    
+    Fields:
+
+      ev_type: int
+         Type of events.  Either SPANV_EVENT_MOTION or 
+         SPNAV_EVENT_BUTTON.
+    '''
+    def __init__(self, ev_type):
+        self.ev_type = ev_type
+
+class SpnavMotionEvent(SpnavEvent):
+    '''Space Navigator Motion Event class
+    
+    Fields:
+    
+      translation: 3-tuple of ints
+        Translation force X,Y,Z in arbitrary integer units
+      rotation: 3-tuple of ints
+        Rotation torque around axes in arbitrary integer units
+      period: int
+        Corresponds to spnav_event_motion.period in libspnav.
+        No idea what the meaning of the field is.
+    '''
+    def __init__(self, translation, rotation, period):
+        SpnavEvent.__init__(self, SPNAV_EVENT_MOTION)
+        self.translation = tuple(translation)
+        self.rotation = tuple(rotation)
+        self.period = period
+
+    def __str__(self):
+        return 'SPNAV_EVENT_MOTION trans(%d,%d,%d) rot(%d,%d,%d)' \
+            % (self.translation + self.rotation)
+
+class SpnavButtonEvent(SpnavEvent):
+    '''Space Navigator Button Event class
+
+    Button events are generated when a button on the controller
+    is pressed and when it is released.
+    
+    Fields:
+    
+      bnum: int
+        Button number
+      press: bool
+        If True, button pressed down, else button released.
+    '''
+    def __init__(self, bnum, press):
+        SpnavEvent.__init__(self, SPNAV_EVENT_BUTTON)
+        self.bnum = bnum
+        self.press = press
+
+    def __str__(self):
+        if self.press:
+            state = 'down'
+        else:
+            state = 'up'
+        return 'SPNAV_EVENT_BUTTON %d %s' % (self.bnum, state)
+
+
+### ctypes C struct wrappers
+
 class spnav_event_motion(Structure):
     '''Space Navigator motion event C struct
 
@@ -85,20 +150,19 @@ class spnav_event(Union):
                 ('motion', spnav_event_motion),
                 ('button', spnav_event_button) ]
 
-    def __str__(self):
-        if self.type == SPNAV_EVENT_ANY:
-            return 'SPNAV_EVENT_ANY'
-        elif self.type == SPNAV_EVENT_MOTION:
-            motion = self.motion
-            return 'SPNAV_EVENT_MOTION t(%d,%d,%d) r(%d,%d,%d)' \
-                % (motion.x, motion.y, motion.z, 
-                   motion.rx, motion.ry, motion.rz)
-        elif self.type == SPNAV_EVENT_BUTTON:
-            if self.button.press:
-                state = 'down'
-            else:
-                state = 'up'
-            return 'SPNAV_EVENT_BUTTON %d %s' % (self.button.bnum, state)
+def convert_spnav_event(c_event):
+    '''Convert an instance of the spnav_event C union to a pure Python
+    instance of SpnavMotionEvent or SpnavButtonEvent.'''
+    if c_event.type == SPNAV_EVENT_MOTION:
+        motion = c_event.motion
+        return SpnavMotionEvent(translation=(motion.x, motion.y, motion.z),
+                                rotation=(motion.rx, motion.ry, motion.rz),
+                                period=motion.period)
+    elif c_event.type == SPNAV_EVENT_BUTTON:
+        button = c_event.button
+        return SpnavButtonEvent(bnum=button.bnum, press=bool(button.press))
+    else:
+        raise SpnavException('Invalid spnav event type: %d' % c_event.type)
 
 class SpnavException(Exception):
     '''Base class for all ``spnav`` exceptions.'''
@@ -174,7 +238,7 @@ def spnav_wait_event():
     event = spnav_event()
     ret = libspnav.spnav_wait_event(byref(event))
     if ret:
-        return event
+        return convert_spnav_event(event)
     else:
         raise SpnavWaitException('non-zero return code from spnav_wait_event()')
 
@@ -189,7 +253,7 @@ def spnav_poll_event():
     if ret == 0:
         return None
     else:
-        return event
+        return convert_spnav_event(event)
 
 def spnav_remove_events(event_type):
     '''Removes pending Space Navigator events from the queue.
@@ -217,4 +281,4 @@ def spnav_x11_event(xevent):
     if ret == 0:
         return None
     else:
-        return event
+        return convert_spnav_event(event)
