@@ -49,4 +49,7 @@ in the module:
 This will print motion and button events from your Space Navigator to
 the console.
 
-For more information and example code, see the documentation.
+For more information and example code, see the documentation:
+
+  http://packages.python.org/spnav/
+
