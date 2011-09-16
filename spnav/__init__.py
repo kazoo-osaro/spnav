@@ -20,9 +20,9 @@ class SpnavEvent(object):
     
     Fields:
 
-      ev_type: int
-         Type of events.  Either SPANV_EVENT_MOTION or 
-         SPNAV_EVENT_BUTTON.
+      `ev_type`: **int**
+         Type of events.  Either ``SPANV_EVENT_MOTION`` or 
+         ``SPNAV_EVENT_BUTTON``.
     '''
     def __init__(self, ev_type):
         self.ev_type = ev_type
@@ -32,11 +32,11 @@ class SpnavMotionEvent(SpnavEvent):
     
     Fields:
     
-      translation: 3-tuple of ints
+      `translation`: 3-tuple of ints
         Translation force X,Y,Z in arbitrary integer units
-      rotation: 3-tuple of ints
+      `rotation`: 3-tuple of ints
         Rotation torque around axes in arbitrary integer units
-      period: int
+      `period`: **int**
         Corresponds to spnav_event_motion.period in libspnav.
         No idea what the meaning of the field is.
     '''
@@ -58,9 +58,9 @@ class SpnavButtonEvent(SpnavEvent):
     
     Fields:
     
-      bnum: int
+      `bnum`: **int**
         Button number
-      press: bool
+      `press`: **bool**
         If True, button pressed down, else button released.
     '''
     def __init__(self, bnum, press):
@@ -85,18 +85,19 @@ class spnav_event_motion(Structure):
 
     Fields:
 
-      type: int
+      `type`: **c_int**
         Always set to SPNAV_EVENT_MOTION
 
-      x, y, z: int
+      `x`, `y`, `z`: **c_int**
         Linear translation force.  Sign of value indicates direction.
 
-      rx, ry, rz: int
+      `rx`, `ry`, `rz`: **c_int**
         Rotation force around each axis.  Sign of value indicates direction.
 
-      period: unsigned int
+      `period`: **c_uint**
+        No idea what this is.
 
-      data: c_void_p
+      `data`: **c_void_p**
         Raw event data.  Ignore this field.
     '''
     _fields_ = [('type', c_int),
@@ -117,13 +118,13 @@ class spnav_event_button(Structure):
 
     Fields:
 
-      type: int
+      `type`: **c_int**
         Always set to SPNAV_EVENT_BUTTON
 
-      press: int
+      `press`: **c_int**
         Set to 1 when the button is pressed and 0 when released.
 
-      bnum: int
+      `bnum`: **c_int**
         Button number on device.
     '''
     _fields_ = [('type', c_int),
@@ -135,15 +136,15 @@ class spnav_event(Union):
 
     A C union between the motion and button event structs.
 
-      type: int
+      `type`: **c_int**
         SPNAV_EVENT_MOTION or SPNAV_EVENT_BUTTON
       
-      motion: spnave_event_motion,
-        If ``type`` == ``SPNAV_EVENT_MOTION``, then this
+      `motion`: spnav_event_motion,
+        If `type` == ``SPNAV_EVENT_MOTION``, then this
         is a motion event C struct.
 
-      button: spnave_event_button,
-        If ``type`` == ``SPNAV_EVENT_BUTTON``, then this
+      `button`: spnave_event_button,
+        If `type` == ``SPNAV_EVENT_BUTTON``, then this
         is a motion event C struct.
     '''
     _fields_ = [('type', c_int),
@@ -209,7 +210,16 @@ def spnav_close():
 def spnav_x11_open(display, window):
     '''Opens a connection to the daemon, using the original magellan
     X11 protocol.  Any application using this protocol should be
-    compatible with the proprietary 3D connexion driver too.'''
+    compatible with the proprietary 3D connexion driver too.
+
+      `display`: ``PyCObject`` containing X11 Display struct
+          X11 display pointer
+      `window`: **int**
+          X11 window handle
+
+      Raises ``SpnavConnectionException`` if Space Navigator daemon
+      cannot be contacted.
+    '''
     display_ptr = pythonapi.PyCObject_AsVoidPtr(display)
     if libspnav.spnav_x11_open(display_ptr, window) == -1:
         raise SpnavConnectionException(
@@ -223,7 +233,11 @@ def spnav_x11_window(window):
     the proprietary 3D connexion daemon only sends events to one
     window at a time, thus this function replaces the window that
     receives events. If compatibility with 3dxsrv is required, do not
-    assume that you can register multiple windows.'''
+    assume that you can register multiple windows.
+
+      `window`: **int**
+        X11 window handle
+    '''
     libspnav.spnav_x11_window(window)
 
 def spnav_wait_event():
@@ -231,9 +245,10 @@ def spnav_wait_event():
 
        Note that the block happens inside the libspnav library, so you
        will not be able to interrupt this function with Ctrl-C.  It is
-       almost always better to use spnav_poll_event() instead.
+       almost always better to use ``spnav_poll_event()`` instead.
 
-       Returns an instance of ``spnav_event``.
+       Returns: An instance of ``SpnavMotionEvent`` or
+       ``SpnavButtonEvent``.
     '''
     event = spnav_event()
     ret = libspnav.spnav_wait_event(byref(event))
@@ -246,7 +261,7 @@ def spnav_poll_event():
     '''Polls for waiting for Space Navigator events.
 
        Returns: None if no waiting events, otherwise an instance of
-       ``spnav_event``.
+       ``SpnavMotionEvent`` or ``SpnavButtonEvent``.
     '''
     event = spnav_event()
     ret = libspnav.spnav_poll_event(byref(event))
@@ -262,10 +277,10 @@ def spnav_remove_events(event_type):
       queued up after a long calculation.  It helps to keep
       your application appearing more responsive.
 
-      event_type: int
-        The type of events to remove.  SPNAV_EVENT_MOTION or
-        SPNAV_EVENT_BUTTON removes just motion or button events,
-        respectively.  SPSPNAV_EVENT_ANY removes both types of events.
+      `event_type`: **int**
+        The type of events to remove.  ``SPNAV_EVENT_MOTION`` or
+        ``SPNAV_EVENT_BUTTON`` removes just motion or button events,
+        respectively.  ``SPNAV_EVENT_ANY`` removes both types of events.
     '''
     return libspnav.spnav_remove_events(event_type)
 
@@ -273,8 +288,9 @@ def spnav_x11_event(xevent):
     '''Examines an arbitrary X11 event to see if it is a Space
     Navigator event.
 
-    Returns: None if not a Space Navigator event, otherwise
-    an instance of spnav_event is returned.
+    Returns: None if not a Space Navigator event, otherwise an
+       instance of ``SpnavMotionEvent`` or ``SpnavButtonEvent`` is
+       returned.
     '''
     event = spnav_event()
     ret = libspnav.spnav_x11_event(xevent, byref(event))

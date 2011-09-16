@@ -14,12 +14,12 @@ along with button events. See:
 
         http://www.3dconnexion.com/products/spacenavigator.html
 
-for more information about the 3D navigator.
+for more information about the Space Navigator.
 
 Any device supported by ``spacenavd`` is supported by the ``libspnav``
-and therefore the spnav module.  This includes not only the current
-USB devices sold by 3dconnexion, but older serial-based devices that
-were sold under many brand names.
+and therefore the ``spnav`` Python module.  This includes not only the
+current USB devices sold by 3dconnexion, but older serial-based
+devices that were sold under many brand names.
 
 For more information about ``spacenavd`` and ``libspnav``, see:
 

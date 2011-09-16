@@ -3,3 +3,4 @@ syntax: glob
 *.pyc
 dist
 MANIFEST
+doc/_build
