@@ -16,8 +16,8 @@ a local UNIX socket-based protocol.  The ``libspnav`` client library,
 also produced by the `spacenav` project, can use either protocol.
 
 If you are using Ubuntu 11.04, you can install ``spacenavd`` and
-``libspnav`` with the following command: 
-::
+``libspnav`` with the following command::
+
   sudo apt-get install spacenavd libspnav0
 
 Otherwise, you will need to download the sofware from:
@@ -29,13 +29,13 @@ and install it manually.
 Package Installation
 --------------------
 
-The ``spnav`` Python module can installed from PyPI with the command:
-::
+The ``spnav`` Python module can installed from PyPI with the command::
+
   sudo easy_install spnav
 
 or installed from `source <http://bitbucket.org/seibert/spnav/>`_ by
-running the usual Python installation procedure:
-::
+running the usual Python installation procedure::
+
   sudo python setup.py install
 
 The ``spnav`` module requires ``ctypes``, which is standard in Python 2.5 and
@@ -63,12 +63,12 @@ Tips
 
 * If you experience strange permission problems when the ``spacenavd``
   daemon is started automatically by the Ubuntu boot scripts.  If you
-  are having trouble, stop the daemon:
-  :: 
+  are having trouble, stop the daemon::
+
     sudo service spacenavd stop
 
-  and then start the daemon manually from a X terminal window:
-  ::
+  and then start the daemon manually from a X terminal window::
+
     sudo spacenavd
 
   Alternatively, try using the direct UNIX socket protocol.

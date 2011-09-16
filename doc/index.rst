@@ -42,9 +42,8 @@ The source repository for ``spnav`` is located at:
 
         http://bitbucket.org/seibert/spnav/
 
-You can download the source code with Mercurial:
+You can download the source code with Mercurial::
 
-::
   hg clone http://bitbucket.org/seibert/spnav/
 
 

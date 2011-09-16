@@ -18,8 +18,6 @@ SPNAV_EVENT_BUTTON = 2
 class SpnavEvent(object):
     '''Space Navigator Event Base class
     
-    Fields:
-
       `ev_type`: **int**
          Type of events.  Either ``SPANV_EVENT_MOTION`` or 
          ``SPNAV_EVENT_BUTTON``.
@@ -29,8 +27,6 @@ class SpnavEvent(object):
 
 class SpnavMotionEvent(SpnavEvent):
     '''Space Navigator Motion Event class
-    
-    Fields:
     
       `translation`: 3-tuple of ints
         Translation force X,Y,Z in arbitrary integer units
@@ -56,8 +52,6 @@ class SpnavButtonEvent(SpnavEvent):
     Button events are generated when a button on the controller
     is pressed and when it is released.
     
-    Fields:
-    
       `bnum`: **int**
         Button number
       `press`: **bool**
@@ -82,8 +76,6 @@ class spnav_event_motion(Structure):
     '''Space Navigator motion event C struct
 
     A motion event is produced whenever a force is applied to the 3D mouse.
-
-    Fields:
 
       `type`: **c_int**
         Always set to SPNAV_EVENT_MOTION
@@ -115,8 +107,6 @@ class spnav_event_button(Structure):
 
     A button event is produced whenever a button on the 3D mouse is pressed
     or released.
-
-    Fields:
 
       `type`: **c_int**
         Always set to SPNAV_EVENT_BUTTON
