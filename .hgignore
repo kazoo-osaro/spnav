@@ -5,3 +5,5 @@ dist
 MANIFEST
 doc/_build
 .coverage
+build/
+spnav.egg-info

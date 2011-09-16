@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='spnav',
@@ -9,6 +9,8 @@ setup(
     packages=['spnav',],
     license='BSD license',
     long_description=open('README.txt').read(),
+    test_suite='nose.collector',
+    #test_requires=['Nose','Mock'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
