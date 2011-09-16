@@ -1,6 +1,6 @@
 '''spnav: a ctypes wrapper for libspnav, a Space Navigator 3D mouse client'''
 
-from ctypes import cdll, c_int, c_uint, c_void_p, py_object, byref, \
+from ctypes import cdll, c_int, c_uint, c_void_p, py_object, pointer, \
     Structure, Union, pythonapi
 
 # OMG CALLING CPYTHON FUNCTIONS FROM INSIDE PYTHON
@@ -241,11 +241,11 @@ def spnav_wait_event():
        ``SpnavButtonEvent``.
     '''
     event = spnav_event()
-    ret = libspnav.spnav_wait_event(byref(event))
+    ret = libspnav.spnav_wait_event(pointer(event))
     if ret:
         return convert_spnav_event(event)
     else:
-        raise SpnavWaitException('non-zero return code from spnav_wait_event()')
+        raise SpnavWaitException('zero return code from spnav_wait_event()')
 
 def spnav_poll_event():
     '''Polls for waiting for Space Navigator events.
@@ -254,7 +254,7 @@ def spnav_poll_event():
        ``SpnavMotionEvent`` or ``SpnavButtonEvent``.
     '''
     event = spnav_event()
-    ret = libspnav.spnav_poll_event(byref(event))
+    ret = libspnav.spnav_poll_event(pointer(event))
     if ret == 0:
         return None
     else:
@@ -283,7 +283,7 @@ def spnav_x11_event(xevent):
        returned.
     '''
     event = spnav_event()
-    ret = libspnav.spnav_x11_event(xevent, byref(event))
+    ret = libspnav.spnav_x11_event(xevent, pointer(event))
     if ret == 0:
         return None
     else:
