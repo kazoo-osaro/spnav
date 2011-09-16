@@ -6,6 +6,7 @@ setup(
     description='ctypes wrapper around libspnav, a client for reading events from a Space Navigator 3D mouse',
     author='Stanley Seibert',
     author_email='stan@mtrr.org',
+    url='http://bitbucket.org/seibert/spnav/',
     packages=['spnav',],
     license='BSD license',
     long_description=open('README.txt').read(),
