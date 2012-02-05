@@ -51,5 +51,5 @@ the console.
 
 For more information and example code, see the documentation:
 
-  http://http://spnav.readthedocs.org/
+  http://spnav.readthedocs.org/
 
