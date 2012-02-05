@@ -33,10 +33,10 @@ later, although I have only tested spnav with Python 2.7.
 Installation
 ------------
 
-The spnav module installs like any other python packages.  You can
+The spnav module installs like any other python package.  You can
 install the package from the unpacked source directory by running
 
-  sudo python setup.up install
+  sudo python setup.py install
 
 Quick Test
 ----------
@@ -51,5 +51,5 @@ the console.
 
 For more information and example code, see the documentation:
 
-  http://packages.python.org/spnav/
+  http://http://spnav.readthedocs.org/
 
