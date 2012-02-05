@@ -7,7 +7,12 @@ from ctypes import cdll, c_int, c_uint, c_void_p, py_object, pointer, \
 pythonapi.PyCObject_AsVoidPtr.restype = c_void_p
 pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
 
-libspnav = cdll.LoadLibrary('libspnav.so')
+import os
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    libspnav = None
+else:
+    libspnav = cdll.LoadLibrary('libspnav.so')
 
 SPNAV_EVENT_ANY = 0
 SPNAV_EVENT_MOTION = 1
