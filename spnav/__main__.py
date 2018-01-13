@@ -6,9 +6,9 @@ if __name__ == '__main__':
         while True:
             event = spnav_poll_event()
             if event is not None:
-                print event
+                print(event)
     except KeyboardInterrupt:
-        print '\nQuitting...'
+        print('\nQuitting...')
     finally:
         spnav_close()
 
