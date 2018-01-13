@@ -4,8 +4,8 @@ from ctypes import cdll, c_int, c_uint, c_void_p, py_object, pointer, \
     Structure, Union, pythonapi
 
 # OMG CALLING CPYTHON FUNCTIONS FROM INSIDE PYTHON
-pythonapi.PyCObject_AsVoidPtr.restype = c_void_p
-pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
+pythonapi.PyCapsule_GetPointer.restype = c_void_p
+pythonapi.PyCapsule_GetPointer.argtypes = [py_object]
 
 import os
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
